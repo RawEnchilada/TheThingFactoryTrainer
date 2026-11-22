@@ -4,9 +4,10 @@ Fine-tunes **Gemma 4 E4B** (`unsloth/gemma-4-E4B-it`) to be The Thing Factory's 
 
 ## How the data gets here
 
-1. Build things in the game with a strong teacher **through the pipeline** (not the agent): Options > Forge, e.g. Claude Code or Claude API, and `"builder": "pipeline"` in `runner_config.json` for Claude Code (its default is the agent builder, which writes no samples).
-2. Each accepted step is saved as `stages/<stage>.sample.json` in the job folder: the exact system + user prompt the model was asked and the accepted answer.
-3. Copy job folders from `~/.local/share/godot/app_userdata/The Thing Factory/forge/jobs/` (Windows: `%APPDATA%\Godot\app_userdata\The Thing Factory\forge\jobs\`) into `training_things/`. You can copy one job, a few, or the whole `jobs/` folder. **The game deletes `forge/jobs/` every time it starts**, so copy them before restarting.
+1. Start the game with **`THING_FACTORY_TRAINING=true`** in its environment (e.g. `THING_FACTORY_TRAINING=true ./TheThingFactory`; on Steam: launch options `THING_FACTORY_TRAINING=true %command%`). Without it the pipeline writes no samples and the game clears old jobs on startup.
+2. Build things in the game with a strong teacher **through the pipeline** (not the agent): Options > Forge, e.g. Claude Code or Claude API, and `"builder": "pipeline"` in `runner_config.json` for Claude Code (its default is the agent builder, which writes no samples).
+3. Each accepted step is saved as `stages/<stage>.sample.json` in the job folder: the exact system + user prompt the model was asked and the accepted answer.
+4. Copy job folders from `~/.local/share/godot/app_userdata/The Thing Factory/forge/jobs/` (Windows: `%APPDATA%\Godot\app_userdata\The Thing Factory\forge\jobs\`) into `training_things/`. You can copy one job, a few, or the whole `jobs/` folder. With training on, jobs survive restarts; without it the game deletes them at startup.
 
 What counts:
 
