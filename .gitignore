@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+data/
+output/
+unsloth_compiled_cache/
+training_things/*
+!training_things/.gitkeep

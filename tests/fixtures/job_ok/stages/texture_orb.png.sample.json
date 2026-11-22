@@ -1,0 +1,164 @@
+{
+ "answer": {
+  "recipe": {
+   "base": "#5a2a9a",
+   "layers": [
+    {
+     "colors": [
+      "#c080ff",
+      "#ffffff"
+     ],
+     "count": 30.0,
+     "type": "speckle"
+    }
+   ],
+   "noise": 10.0,
+   "size": [
+    16.0,
+    16.0
+   ]
+  }
+ },
+ "attempts": 1,
+ "model": "opus",
+ "provider": "replay",
+ "schema": {
+  "properties": {
+   "base": {
+    "type": "string"
+   },
+   "layers": {
+    "items": {
+     "properties": {
+      "brick_h": {
+       "type": "integer"
+      },
+      "brick_w": {
+       "type": "integer"
+      },
+      "cell": {
+       "type": "integer"
+      },
+      "color": {
+       "type": "string"
+      },
+      "colors": {
+       "items": {
+        "type": "string"
+       },
+       "maxItems": 4,
+       "type": "array"
+      },
+      "count": {
+       "type": "integer"
+      },
+      "cx": {
+       "type": "integer"
+      },
+      "cy": {
+       "type": "integer"
+      },
+      "direction": {
+       "enum": [
+        "horizontal",
+        "vertical",
+        "diagonal"
+       ],
+       "type": "string"
+      },
+      "fill": {
+       "type": "boolean"
+      },
+      "h": {
+       "type": "integer"
+      },
+      "plank_h": {
+       "type": "integer"
+      },
+      "r": {
+       "type": "integer"
+      },
+      "radius": {
+       "type": "integer"
+      },
+      "spacing": {
+       "type": "integer"
+      },
+      "strength": {
+       "type": "number"
+      },
+      "type": {
+       "enum": [
+        "stripes",
+        "checker",
+        "bricks",
+        "planks",
+        "dots",
+        "speckle",
+        "gradient",
+        "border",
+        "rect",
+        "circle",
+        "line"
+       ],
+       "type": "string"
+      },
+      "w": {
+       "type": "integer"
+      },
+      "width": {
+       "type": "integer"
+      },
+      "x": {
+       "type": "integer"
+      },
+      "x1": {
+       "type": "integer"
+      },
+      "x2": {
+       "type": "integer"
+      },
+      "y": {
+       "type": "integer"
+      },
+      "y1": {
+       "type": "integer"
+      },
+      "y2": {
+       "type": "integer"
+      }
+     },
+     "required": [
+      "type"
+     ],
+     "type": "object"
+    },
+    "maxItems": 5,
+    "type": "array"
+   },
+   "noise": {
+    "type": "number"
+   },
+   "seed": {
+    "type": "integer"
+   },
+   "size": {
+    "items": {
+     "type": "integer"
+    },
+    "maxItems": 2,
+    "minItems": 2,
+    "type": "array"
+   }
+  },
+  "required": [
+   "size",
+   "base",
+   "layers"
+  ],
+  "type": "object"
+ },
+ "stage": "texture:orb.png",
+ "system": "You design ONE tiny pixel-art texture for a game object as a recipe: a repeating surface. Answer with JSON only: the recipe object itself ({\"size\": ..., \"base\": ..., \"layers\": [...]}).\n\nA **surface** is a material swatch that repeats (wood grain, metal plate, fabric, bricks, scales), not a picture of the object. 32x32 covers 1 meter. Colors are \"#rrggbb\".\n\n- Recipe: `size` [w, h] (16-64), `base` color, `noise` (0-30, pixel color jitter), `seed`, `layers` drawn in order.\n- Layers: `stripes` (color, width, spacing, direction: horizontal|vertical|diagonal), `checker` (color, cell), `bricks` (color = mortar, brick_w, brick_h), `planks` (color = seams, plank_h), `dots` (color, count, radius), `speckle` (colors: [...], count), `gradient` (color, direction, strength 0-1), `border` (color, width), `rect` (color, x, y, w, h), `circle` (color, cx, cy, r, fill), `line` (color, x1, y1, x2, y2).\n\n## Examples\n\nWood: {\"size\": [32, 32], \"base\": \"#7a5634\", \"noise\": 8, \"layers\": [{\"type\": \"planks\", \"color\": \"#3a2614\", \"plank_h\": 8}, {\"type\": \"speckle\", \"colors\": [\"#6a4a2a\"], \"count\": 30}]}\n\nRiveted metal: {\"size\": [32, 32], \"base\": \"#8a9098\", \"noise\": 6, \"layers\": [{\"type\": \"border\", \"color\": \"#5a6068\", \"width\": 1}, {\"type\": \"dots\", \"color\": \"#c0c6cc\", \"count\": 4, \"radius\": 1}]}\n\nRed bricks: {\"size\": [32, 32], \"base\": \"#a04030\", \"noise\": 10, \"layers\": [{\"type\": \"bricks\", \"color\": \"#d8d0c0\", \"brick_w\": 16, \"brick_h\": 8}]}\n",
+ "user": "Object: Glowing Orb (Hums when used.)\n\nSurface texture (repeating) file `orb.png`: purple speckles"
+}

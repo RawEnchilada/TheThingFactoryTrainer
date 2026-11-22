@@ -1,0 +1,186 @@
+{
+ "answer": {
+  "recipe": {
+   "duration": 0.6,
+   "layers": [
+    {
+     "freq": 220.0,
+     "freq_end": 440.0,
+     "release": 0.3,
+     "type": "tone",
+     "wave": "triangle"
+    }
+   ]
+  }
+ },
+ "attempts": 1,
+ "model": "opus",
+ "provider": "replay",
+ "schema": {
+  "properties": {
+   "duration": {
+    "type": "number"
+   },
+   "echo": {
+    "properties": {
+     "delay": {
+      "type": "number"
+     },
+     "feedback": {
+      "type": "number"
+     },
+     "mix": {
+      "type": "number"
+     }
+    },
+    "type": "object"
+   },
+   "layers": {
+    "items": {
+     "properties": {
+      "attack": {
+       "type": "number"
+      },
+      "color": {
+       "enum": [
+        "white",
+        "pink",
+        "brown"
+       ],
+       "type": "string"
+      },
+      "count": {
+       "type": "integer"
+      },
+      "decay": {
+       "type": "number"
+      },
+      "drive": {
+       "type": "number"
+      },
+      "duration": {
+       "type": "number"
+      },
+      "filter": {
+       "properties": {
+        "freq": {
+         "type": "number"
+        },
+        "freq_end": {
+         "type": "number"
+        },
+        "q": {
+         "type": "number"
+        },
+        "type": {
+         "enum": [
+          "lowpass",
+          "highpass",
+          "bandpass",
+          "peak"
+         ],
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "freq": {
+       "type": "number"
+      },
+      "freq_end": {
+       "type": "number"
+      },
+      "grain_length": {
+       "type": "number"
+      },
+      "index": {
+       "type": "number"
+      },
+      "index_end": {
+       "type": "number"
+      },
+      "note_length": {
+       "type": "number"
+      },
+      "notes": {
+       "type": "string"
+      },
+      "ratio": {
+       "type": "number"
+      },
+      "release": {
+       "type": "number"
+      },
+      "start": {
+       "type": "number"
+      },
+      "type": {
+       "enum": [
+        "tone",
+        "fm",
+        "noise",
+        "grains",
+        "notes"
+       ],
+       "type": "string"
+      },
+      "vibrato_depth": {
+       "type": "number"
+      },
+      "vibrato_rate": {
+       "type": "number"
+      },
+      "volume": {
+       "type": "number"
+      },
+      "wave": {
+       "enum": [
+        "sine",
+        "square",
+        "saw",
+        "triangle",
+        "pulse"
+       ],
+       "type": "string"
+      }
+     },
+     "required": [
+      "type"
+     ],
+     "type": "object"
+    },
+    "maxItems": 5,
+    "minItems": 1,
+    "type": "array"
+   },
+   "reverb": {
+    "properties": {
+     "damp": {
+      "type": "number"
+     },
+     "mix": {
+      "type": "number"
+     },
+     "room": {
+      "type": "number"
+     }
+    },
+    "type": "object"
+   },
+   "seed": {
+    "type": "integer"
+   },
+   "volume": {
+    "type": "number"
+   }
+  },
+  "required": [
+   "duration",
+   "layers"
+  ],
+  "type": "object"
+ },
+ "stage": "sound:hum.wav",
+ "system": "You design ONE sound effect for a game as a synth recipe. Answer with JSON only: the recipe object itself ({\"duration\": ..., \"layers\": [...]}).\n\nA recipe mixes layers, then applies master effects. Real sounds have a few layers: a sharp **transient** (a few ms of filtered noise), a **body** (tone / noise / fm with an exponential `decay`), and sometimes a **tail** (longer, darker noise or reverb). Max 6 seconds; most effects are 0.1-1.5 s.\n\n- Recipe: `duration`, `volume` (0-1), `seed`, `layers` [...], optional `reverb` {\"room\" 0-1, \"mix\" 0-1, \"damp\" 0-1}, `echo` {\"delay\", \"feedback\", \"mix\"}, `drive` (0-1), `lowpass`, `highpass` (Hz), `fade_out` (s).\n- Every layer: `type`, `start`, `duration`, `volume`, `attack`, `decay` (exponential fall, seconds to ~1/3; use it for anything struck), `release` (fade at the end), `filter` {\"type\": lowpass|highpass|bandpass|peak, \"freq\", \"freq_end\" (sweep), \"q\"}, `drive` (0-1).\n- `tone`: `wave` sine|square|saw|triangle|pulse, `freq`, `freq_end` (pitch sweep), `vibrato_rate`, `vibrato_depth`.\n- `fm`: metal, bells, clanks, zaps: `freq`, `ratio` (1.41, 2.76, 3.5 sound metallic), `index` (brightness 0-20), `index_end`, `freq_end`.\n- `noise`: `color` white|pink|brown. Lowpassed brown noise = rumble, bandpassed white = hiss/swoosh, short highpassed white = crack.\n- `grains`: crunch, gravel, rattle, crackle, fizz: `count` short bursts, `grain_length`, `color`, `filter`.\n- `notes`: melodies and jingles: `notes` \"C5 E5 G5 - C6\" (`-` rest), `note_length`, `wave`.\n\n## Examples\n\nA click:\n{\"duration\": 0.08, \"volume\": 0.7, \"layers\": [\n {\"type\": \"noise\", \"duration\": 0.01, \"decay\": 0.002, \"filter\": {\"type\": \"highpass\", \"freq\": 3000}, \"volume\": 0.8},\n {\"type\": \"fm\", \"freq\": 2400, \"ratio\": 1.41, \"index\": 2.5, \"decay\": 0.008, \"duration\": 0.05, \"volume\": 0.5}]}\n\nA heavy thud:\n{\"duration\": 0.6, \"volume\": 0.85, \"layers\": [\n {\"type\": \"tone\", \"freq\": 85, \"freq_end\": 42, \"decay\": 0.09, \"duration\": 0.4},\n {\"type\": \"noise\", \"color\": \"brown\", \"decay\": 0.07, \"duration\": 0.3, \"filter\": {\"type\": \"lowpass\", \"freq\": 500}, \"volume\": 0.9}],\n \"reverb\": {\"room\": 0.3, \"mix\": 0.15}}\n\nA laser zap:\n{\"duration\": 0.35, \"volume\": 0.8, \"layers\": [\n {\"type\": \"tone\", \"wave\": \"saw\", \"freq\": 1800, \"freq_end\": 200, \"decay\": 0.12, \"duration\": 0.3, \"filter\": {\"type\": \"lowpass\", \"freq\": 5000, \"freq_end\": 800}},\n {\"type\": \"noise\", \"duration\": 0.03, \"decay\": 0.008, \"filter\": {\"type\": \"highpass\", \"freq\": 4000}, \"volume\": 0.4}]}\n",
+ "user": "Object: Glowing Orb (Hums when used.)\n\nSound file `hum.wav`: rising hum"
+}

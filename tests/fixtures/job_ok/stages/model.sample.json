@@ -1,0 +1,224 @@
+{
+ "answer": {
+  "lights": [
+   {
+    "color": "#b080ff",
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "range": 3.0
+   }
+  ],
+  "markers": {
+   "hand_left": [
+    0.0,
+    -0.2,
+    0.0
+   ],
+   "hand_right": [
+    0.0,
+    -0.2,
+    0.0
+   ],
+   "muzzle": [
+    0.0,
+    0.0,
+    -0.25
+   ]
+  },
+  "parts": [
+   {
+    "color": "#8040c0",
+    "glow": 1.5,
+    "name": "Ball",
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "shape": "sphere",
+    "size": [
+     0.5,
+     0.5,
+     0.5
+    ],
+    "texture": "orb.png"
+   },
+   {
+    "color": "#202020",
+    "metal": 0.8,
+    "name": "Band",
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "shape": "ring",
+    "size": [
+     0.54,
+     0.04,
+     0.0
+    ]
+   }
+  ]
+ },
+ "attempts": 1,
+ "model": "opus",
+ "provider": "replay",
+ "schema": {
+  "properties": {
+   "lights": {
+    "items": {
+     "properties": {
+      "color": {
+       "type": "string"
+      },
+      "energy": {
+       "type": "number"
+      },
+      "position": {
+       "items": {
+        "type": "number"
+       },
+       "maxItems": 3,
+       "minItems": 3,
+       "type": "array"
+      },
+      "range": {
+       "type": "number"
+      }
+     },
+     "type": "object"
+    },
+    "maxItems": 3,
+    "type": "array"
+   },
+   "markers": {
+    "properties": {
+     "hand_left": {
+      "items": {
+       "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+     },
+     "hand_right": {
+      "items": {
+       "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+     },
+     "muzzle": {
+      "items": {
+       "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+     },
+     "seat": {
+      "items": {
+       "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+     },
+     "wear_point": {
+      "items": {
+       "type": "number"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+     }
+    },
+    "type": "object"
+   },
+   "parts": {
+    "items": {
+     "properties": {
+      "color": {
+       "type": "string"
+      },
+      "glow": {
+       "type": "number"
+      },
+      "metal": {
+       "type": "number"
+      },
+      "name": {
+       "type": "string"
+      },
+      "position": {
+       "items": {
+        "type": "number"
+       },
+       "maxItems": 3,
+       "minItems": 3,
+       "type": "array"
+      },
+      "rotation": {
+       "items": {
+        "type": "number"
+       },
+       "maxItems": 3,
+       "minItems": 3,
+       "type": "array"
+      },
+      "shape": {
+       "enum": [
+        "box",
+        "cylinder",
+        "cone",
+        "sphere",
+        "ring"
+       ],
+       "type": "string"
+      },
+      "size": {
+       "items": {
+        "type": "number"
+       },
+       "maxItems": 3,
+       "minItems": 3,
+       "type": "array"
+      },
+      "texture": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "name",
+      "shape",
+      "size",
+      "position",
+      "color"
+     ],
+     "type": "object"
+    },
+    "maxItems": 16,
+    "minItems": 1,
+    "type": "array"
+   }
+  },
+  "required": [
+   "parts",
+   "markers"
+  ],
+  "type": "object"
+ },
+ "stage": "model",
+ "system": "You build the 3D model of one game object from simple parts. Answer with JSON only, matching the schema.\n\n## Space\n\n- Meters. +Y is up, **-Z is the front** (where a gun points, where a vehicle drives, the toes of a shoe), +X is right.\n- The origin (0, 0, 0) is the center of the object. For vehicles and props, put the bottom near y = 0 - size/2 or simply let the parts sit around the origin.\n- `position` is the center of the part. `rotation` is in degrees [x, y, z]; a cylinder stands upright (along Y), so rotation [90, 0, 0] lays it along Z (a barrel).\n\n## Parts\n\n- `shape`: `box` (size = [width x, height y, depth z]), `cylinder` (size = [diameter, height, unused]), `cone` (like cylinder, point at the top), `sphere` (size = [diameter, unused, unused]), `ring` (torus lying flat: size = [outer diameter, tube thickness, unused]).\n- `color`: \"#rrggbb\". `texture`: one of the given texture files, or \"\" for a plain color. `glow`: 0 for normal, 1-4 for glowing parts. `metal`: 0 for paint, wood, cloth, plastic; 0.7 for bare metal.\n- `name`: PascalCase, unique (Barrel, Handle, Wheel1). The script refers to parts by these names.\n- 3 to 15 parts. Make parts touch or overlap so the object is one solid piece. Use the sizes from the plan.\n\n## Markers (only those the plan's kind needs)\n\n- `held`: `hand_right` = where the right hand grips (a handle, the grip of a gun), `hand_left` = where the left hand grips (the forend of a rifle; for one-handed things put it at the same spot as `hand_right`). `muzzle` = where shots or effects come out, at the front tip.\n- `worn`: `wear_point` = the point that sits on the body (the base of a hat, the flat back of a backpack).\n- `vehicle`: `seat` = where the driver's feet go.\n- Feet things: build ONE shoe only. Its origin is the bottom of the sole under the ankle, the toes toward -Z, about 0.3 m long and 0.11 m wide. The game makes the pair.\n- `lights`: optional glowing lamps (color, range in meters, energy 1-4).\n",
+ "user": "Object plan:\n{\n \"name\": \"Glowing Orb\",\n \"description\": \"Hums when used.\",\n \"kind\": \"held\",\n \"hands\": \"any\",\n \"size_m\": [\n  0.5,\n  0.5,\n  0.5\n ],\n \"look\": \"a purple glowing ball\",\n \"behavior\": \"left mouse hums and heals 10\"\n}\n\nTexture files you may use: orb.png\nMarkers this object needs: hand_right, hand_left, muzzle\nAdd at least one light.\n"
+}

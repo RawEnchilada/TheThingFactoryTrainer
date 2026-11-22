@@ -1,0 +1,24 @@
+[project]
+name = "forge-trainer"
+version = "0.1.0"
+description = "Fine-tunes a small model (Gemma 4 E4B) on The Thing Factory's forge pipeline"
+readme = "README.md"
+# Ingest / watch / build need only the standard library. Training needs the
+# "train" extra; torch wheels lag new Pythons, so use 3.12 for it.
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+train = [
+    "torch",
+    "transformers>=4.57",
+    "peft",
+    "trl>=0.20",
+    "datasets",
+    "accelerate",
+    "bitsandbytes",
+]
+unsloth = ["unsloth"]
+
+[tool.setuptools]
+packages = ["forge_trainer"]
