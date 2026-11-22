@@ -43,6 +43,19 @@ python -m forge_trainer export --ollama-name forge-gemma
 
 `export` makes a GGUF (`--quant q4_k_m`), writes a Modelfile that copies the chat template from an installed Ollama model with the same format (`--template-from gemma4:e4b`, pull it first) and runs `ollama create`. Without Unsloth it merges with peft and needs a llama.cpp checkout (`--llama-cpp <dir>`). In the game: Options > Forge > **Ollama (local)**, model = `forge-gemma`.
 
+## Training on Colab
+
+`notebooks/train_colab.ipynb` trains on a free Colab T4 (15 GB). Run `python -m forge_trainer build`, copy `data/train.jsonl` and `data/eval.jsonl` to Google Drive at `MyDrive/ForgeTrainer/data/`, open the notebook in Colab (File > Upload notebook), pick a T4 runtime and Run all.
+
+- The loss only covers the answers: each prompt is rendered with the model's chat template and masked.
+- Samples over `MAX_LENGTH` (6144 tokens, a T4 limit) are dropped; the notebook prints how many per step.
+- Checkpoints are saved to Drive every 25 steps, so after a disconnect, Run all resumes.
+- It saves the adapter and a q4_k_m GGUF to `MyDrive/ForgeTrainer/output/`. If the GGUF cell runs out of RAM, export the adapter locally instead.
+
+Then on your PC: `python -m forge_trainer export --gguf <downloaded>.gguf --ollama-name forge-gemma` (needs `ollama pull gemma4:e4b` once for its `RENDERER`/`PARSER` chat format).
+
+Edit the notebook through `notebooks/make_notebook.py` and rerun it.
+
 ## Hardware
 
 Gemma 4 E4B QLoRA needs roughly 10-17 GB of VRAM depending on sequence length; the script step's prompts are long (several thousand tokens). An NVIDIA GPU with Unsloth is the easy path; a rented 24-48 GB GPU or Colab works. AMD (ROCm) can use `--backend hf`, but bitsandbytes 4-bit on ROCm and consumer RDNA2 cards are not reliably supported.

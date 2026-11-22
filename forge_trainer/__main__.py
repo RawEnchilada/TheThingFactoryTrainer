@@ -47,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument("--template-from", default="gemma4:e4b", help="Ollama model whose chat template to copy")
     e.add_argument("--ollama-name", default="", help="create this Ollama model (e.g. forge-gemma)")
     e.add_argument("--backend", choices=["auto", "unsloth", "hf"], default="auto")
+    e.add_argument("--gguf", type=Path, default=None, help="use this ready GGUF (e.g. from the Colab notebook) instead of converting")
 
     args = p.parse_args(argv)
     store = Store(args.things, args.data)
@@ -83,7 +84,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "export":
         from .export import export
         return export(args.output / "adapter", args.output / "export", args.quant, args.llama_cpp,
-                      args.template_from, args.ollama_name, args.backend)
+                      args.template_from, args.ollama_name, args.backend, args.gguf)
     return 2
 
 

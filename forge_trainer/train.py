@@ -93,6 +93,11 @@ def _load(cfg: TrainConfig, backend: str):
     return model, tokenizer
 
 
+def _bf16() -> bool:
+    import torch
+    return torch.cuda.is_available() and torch.cuda.is_bf16_supported()
+
+
 def _fits(tokenizer, row: dict, max_length: int) -> bool:
     ids = tokenizer.apply_chat_template(row["prompt"] + row["completion"], tokenize=True)
     return len(ids) <= max_length
@@ -133,7 +138,8 @@ def train(cfg: TrainConfig) -> int:
         eval_strategy="epoch" if eval_kept else "no",
         max_length=cfg.max_length,
         completion_only_loss=True,  # learn the answers, not the prompts
-        bf16=True,
+        bf16=_bf16(),
+        fp16=not _bf16(),  # T4 (Colab) has no bf16
         report_to="none",
         seed=3407,
     )

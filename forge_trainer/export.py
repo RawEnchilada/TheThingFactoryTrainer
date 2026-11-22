@@ -73,14 +73,25 @@ def _template_lines(source: str) -> list[str]:
             keep.append(line)
             if '"""' in line:
                 inside = False
-        elif line.startswith("PARAMETER"):
+        elif line.startswith(("RENDERER", "PARSER")):
+            # Newer Ollama models (gemma4) format chats with a built-in renderer, not the TEMPLATE.
+            keep.append(line)
+        elif line.startswith("PARAMETER") and not line.split()[1:2] == ["draft_num_predict"]:
+            # draft_* belongs to the stock model's DRAFT (speculative decoding) model, not ours.
             keep.append(line)
     return keep
 
 
 def export(adapter: Path, out: Path, quant: str = "q4_k_m", llama_cpp: Path | None = None,
-           template_from: str = "gemma4:e4b", ollama_name: str = "", backend: str = "auto") -> int:
+           template_from: str = "gemma4:e4b", ollama_name: str = "", backend: str = "auto",
+           gguf_file: Path | None = None) -> int:
     out.mkdir(parents=True, exist_ok=True)
+    if gguf_file is not None:
+        # Already converted (e.g. on Colab): copy it next to the Modelfile.
+        gguf = out / gguf_file.name
+        if gguf_file.resolve() != gguf.resolve():
+            shutil.copy2(gguf_file, gguf)
+        return _finish(out, gguf, template_from, ollama_name)
     use_unsloth = backend == "unsloth"
     if backend == "auto":
         try:
@@ -90,7 +101,10 @@ def export(adapter: Path, out: Path, quant: str = "q4_k_m", llama_cpp: Path | No
             use_unsloth = False
     gguf = _gguf_unsloth(adapter, out, quant) if use_unsloth else _gguf_llama_cpp(adapter, out, quant, llama_cpp)
     print(f"gguf: {gguf}", flush=True)
+    return _finish(out, gguf, template_from, ollama_name)
 
+
+def _finish(out: Path, gguf: Path, template_from: str, ollama_name: str) -> int:
     template = _template_lines(template_from)
     if not template:
         print(f"warning: could not read the chat template of {template_from!r} from Ollama "
